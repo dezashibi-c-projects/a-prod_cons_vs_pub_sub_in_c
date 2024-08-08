@@ -1,0 +1,5 @@
+*.exe
+*.pdb
+*.o
+producer_consumer
+publisher_subscriber
