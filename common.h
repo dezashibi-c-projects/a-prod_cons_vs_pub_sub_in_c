@@ -20,12 +20,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if (defined(_WIN32) || defined(_WIN64))
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
-#define xsleep(x) Sleep(x)
+#define xsleep(x) Sleep((x))
 #else
-#include <unistd.h>
-#define xsleep(x) usleep((x) * 1000)
+void xsleep(unsigned int milliseconds)
+{
+    struct timespec ts;
+    ts.tv_sec = milliseconds / 1000;
+    ts.tv_nsec = (milliseconds % 1000) * 1000000;
+    nanosleep(&ts, NULL);
+}
 #endif
 
 typedef struct cthreads_mutex CThreadsMutex;
