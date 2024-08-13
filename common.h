@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined(_WIN32) || defined(_WIN64)
+#if (defined(_WIN32) || defined(_WIN64))
 #include <windows.h>
 #define xsleep(x) Sleep(x)
 #else
