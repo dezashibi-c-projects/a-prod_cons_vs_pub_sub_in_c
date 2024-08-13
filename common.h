@@ -20,12 +20,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
+#ifdef defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
-#define wait(x) Sleep(x)
+#define xsleep(x) Sleep(x)
 #else
 #include <unistd.h>
-#define wait(x) usleep(x * 1000)
+#define xsleep(x) usleep((x) * 1000)
 #endif
 
 typedef struct cthreads_mutex CThreadsMutex;

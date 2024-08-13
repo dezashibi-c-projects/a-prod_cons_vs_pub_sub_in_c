@@ -47,7 +47,7 @@ void* publisher(void* arg)
         cthreads_cond_broadcast(&queue.cond);
         cthreads_mutex_unlock(&queue.mutex);
 
-        wait(1000);
+        xsleep(1000);
     }
     return NULL;
 }
@@ -73,7 +73,7 @@ void* subscriber(void* arg)
         cthreads_cond_broadcast(&queue.cond);
         cthreads_mutex_unlock(&queue.mutex);
 
-        wait(1500);
+        xsleep(1500);
     }
     return NULL;
 }

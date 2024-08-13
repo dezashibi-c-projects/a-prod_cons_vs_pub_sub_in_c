@@ -54,7 +54,7 @@ void* producer(void* arg)
         cthreads_mutex_unlock(&mutex);
 
         // Simulate some delay
-        wait(1000);
+        xsleep(1000);
     }
     return NULL;
 }
@@ -84,7 +84,7 @@ void* consumer(void* arg)
         cthreads_mutex_unlock(&mutex);
 
         // Simulate some delay
-        wait(1500);
+        xsleep(1500);
     }
     return NULL;
 }
