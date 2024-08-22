@@ -2,9 +2,7 @@
 
 ## Introduction
 
-In multi-threaded programming, two common patterns emerge to manage the flow of data between threads: the producer-consumer pattern and the publish-subscribe (pub/sub) pattern. Although both patterns aim to coordinate the efforts of multiple threads, they serve different purposes and employ different mechanisms. In this discussion, I would like to implement these patterns and explore their implementations using `CThreads` in C, and highlight their key differences and use cases.
-
-I've used `CThreads` multiple times in different projects and even in my portfolio projects in this very organization, so why not trying to port my codes from `pthreads` to `CThreads` to see how it goes!? 😊⭐
+In multi-threaded programming, two common patterns emerge to manage the flow of data between threads: the producer-consumer pattern and the publish-subscribe (pub/sub) pattern. Although both patterns aim to coordinate the efforts of multiple threads, they serve different purposes and employ different mechanisms. In this discussion, I would like to implement these patterns and explore their implementations using my own cross platform multi threading library  [DThreads](https://github.com/dezashibi-c/dthreads), and highlight their key differences and use cases.
 
 **All codes are tested on Windows and WSL using both `zig cc` and `gcc`, also no memory leaked by checking through `valgrind`.**
 
@@ -52,19 +50,7 @@ The producer-consumer pattern is ideal for direct hand-off of tasks between thre
 
 On the other hand, the pub/sub pattern is excellent for event-driven architectures, where multiple components need to respond to changes or events without being tightly coupled.
 
-While the examples provided offer a glimpse into these patterns using `CThreads` in C, real-world applications often rely on specialized libraries and frameworks to handle the complexities involved. Understanding these fundamental patterns is crucial for designing robust and efficient multi-threaded systems.
-
-As mentioned above, you can refer to the code examples files. These examples illustrate a simplified usage of `CThreads`, mutexes, and condition variables in both patterns, providing a basic foundation for developing multi-threaded applications in C.
-
-**NOTE (Debug Messages):** You can disable debug messages by removing `-DCTHREADS_DEBUG` from line `20` of `Makefile`.
-
-## Third Party Notices
-
-This project uses the following third-party library:
-
-### `CThreads` (BSD 2-Clause License)
-
-Please refer to [LICENSE](/third_party/CThreads/LICENSE).
+**NOTE (Debug Messages):** You can disable debug messages by removing `-DDTHREAD_DEBUG` from line `20` of `Makefile`.
 
 ## License
 

@@ -13,7 +13,9 @@
 // *  Description: Read the readme file for more information
 // ***************************************************************************************
 
+#define DTHREAD_IMPL
 #include "common.h"
+#include "dthreads/dthread.h"
 
 #define BUFFER_SIZE 10
 
@@ -22,12 +24,11 @@ int buffer[BUFFER_SIZE];
 int count = 0; // Number of items in the buffer
 
 // Mutex and condition variables
-CThreadsMutex mutex;
-CThreadsCond cond_producer;
-CThreadsCond cond_consumer;
+DThreadMutex mutex;
+DThreadCond cond_producer;
+DThreadCond cond_consumer;
 
-// Producer function
-void* producer(void* arg)
+dthread_define_routine(producer)
 {
     for (int i = 1; i <= 20; i++)
     {
@@ -35,12 +36,12 @@ void* producer(void* arg)
         int item = i;
 
         // Lock the mutex before accessing the buffer
-        cthreads_mutex_lock(&mutex);
+        dthread_mutex_lock(&mutex);
 
         // Wait until the buffer has space
         while (count == BUFFER_SIZE)
         {
-            cthreads_cond_wait(&cond_producer, &mutex);
+            dthread_cond_wait(&cond_producer, &mutex);
         }
 
         // Add the item to the buffer
@@ -48,10 +49,10 @@ void* producer(void* arg)
         printf("Produced: %d\n", item);
 
         // Signal the consumer that there are items in the buffer
-        cthreads_cond_signal(&cond_consumer);
+        dthread_cond_signal(&cond_consumer);
 
         // Unlock the mutex
-        cthreads_mutex_unlock(&mutex);
+        dthread_mutex_unlock(&mutex);
 
         // Simulate some delay
         xsleep(1000);
@@ -59,18 +60,17 @@ void* producer(void* arg)
     return NULL;
 }
 
-// Consumer function
-void* consumer(void* arg)
+dthread_define_routine(consumer)
 {
     for (int i = 1; i <= 20; i++)
     {
         // Lock the mutex before accessing the buffer
-        cthreads_mutex_lock(&mutex);
+        dthread_mutex_lock(&mutex);
 
         // Wait until there are items in the buffer
         while (count == 0)
         {
-            cthreads_cond_wait(&cond_consumer, &mutex);
+            dthread_cond_wait(&cond_consumer, &mutex);
         }
 
         // Remove the item from the buffer
@@ -78,10 +78,10 @@ void* consumer(void* arg)
         printf("Consumed: %d\n", item);
 
         // Signal the producer that there is space in the buffer
-        cthreads_cond_signal(&cond_producer);
+        dthread_cond_signal(&cond_producer);
 
         // Unlock the mutex
-        cthreads_mutex_unlock(&mutex);
+        dthread_mutex_unlock(&mutex);
 
         // Simulate some delay
         xsleep(1500);
@@ -91,43 +91,45 @@ void* consumer(void* arg)
 
 int main(void)
 {
-    CThreadsThread producer_thread, consumer_thread;
-    CThreadsArgs producer_thread_args, consumer_thread_args;
+    DThread producer_thread, consumer_thread;
 
-    cthreads_mutex_init(&mutex, NULL);
-    cthreads_cond_init(&cond_producer, NULL);
-    cthreads_cond_init(&cond_consumer, NULL);
+    producer_thread = dthread_init_thread(producer, NULL);
+    consumer_thread = dthread_init_thread(consumer, NULL);
+
+    dthread_mutex_init(&mutex, NULL);
+    dthread_cond_init(&cond_producer, NULL);
+    dthread_cond_init(&cond_consumer, NULL);
 
     // Create the producer and consumer threads
-    if (cthreads_thread_create(&producer_thread, NULL, producer, NULL, &producer_thread_args) != 0)
+    if (dthread_create(&producer_thread, NULL) != 0)
     {
         fprintf(stderr, "Creating thread failed\n");
         return 1;
     }
 
-    if (cthreads_thread_create(&consumer_thread, NULL, consumer, NULL, &consumer_thread_args) != 0)
+    if (dthread_create(&consumer_thread, NULL) != 0)
     {
         fprintf(stderr, "Creating thread failed\n");
         return 1;
     }
 
     // Wait for both threads to finish
-    if (cthreads_thread_join(producer_thread, NULL) != 0)
+    if (dthread_join(&producer_thread) != 0)
     {
         fprintf(stderr, "Joining thread failed\n");
         return 1;
     }
 
-    if (cthreads_thread_join(consumer_thread, NULL) != 0)
+    if (dthread_join(&consumer_thread) != 0)
     {
         fprintf(stderr, "Joining thread failed\n");
         return 1;
     }
 
     // Clean up
-    cthreads_mutex_destroy(&mutex);
-    cthreads_cond_destroy(&cond_producer);
-    cthreads_cond_destroy(&cond_consumer);
+    dthread_mutex_destroy(&mutex);
+    dthread_cond_destroy(&cond_producer);
+    dthread_cond_destroy(&cond_consumer);
 
     return 0;
 }

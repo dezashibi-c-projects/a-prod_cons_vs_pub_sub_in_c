@@ -17,7 +17,7 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -DCTHREADS_DEBUG -Wall -g -O0
+CFLAGS = -DDTHREAD_DEBUG -Wall -g -O0
 TARGET_NAME1 = producer_consumer
 TARGET_NAME2 = publisher_subscriber
 
@@ -52,10 +52,10 @@ run2: pub_sub
 
 # Rule to link the object files and create the executable (debug)
 prod_cons: $(SRC1)
-	$(BUILD) $(SRC1) cthreads.c -o $(TARGET1)
+	$(BUILD) $(SRC1) -o $(TARGET1)
 
 pub_sub: $(SRC2)
-	$(BUILD) $(SRC2) cthreads.c -o $(TARGET2)
+	$(BUILD) $(SRC2) -o $(TARGET2)
 
 # Clean up
 clean:
